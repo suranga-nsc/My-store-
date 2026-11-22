@@ -2,176 +2,872 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EDO Admin Control Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Gemunu+Libre:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EDO Entrepreneur - දේශීය අභිමානය හා ස්වයං රැකියා වෙළඳපොළ</title>
+    
+    <!-- PWA Settings -->
+    <meta name="theme-color" content="#ffcc00">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EDO App">
+
+    <!-- PWA Manifest & Icon -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_j0n8wuj0n8wuj0n8%20(1).jpeg">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Gemunu+Libre:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Gemunu Libre', sans-serif; }
-        body { background: #f1f5f9; color: #1e293b; padding: 15px; }
-        .container { max-width: 800px; margin: auto; }
-        .login-card { background: white; max-width: 400px; margin: 80px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .card { background: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #1b5e20; }
-        h2 { color: #1b5e20; margin-bottom: 12px; font-size: 1.35rem; }
-        h3 { font-size: 1rem; margin-bottom: 10px; color: #0f172a; }
-        input, select { width: 100%; padding: 9px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem; }
-        .btn { background: #1b5e20; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; width: 100%; font-size: 0.9rem; }
-        .btn-red { background: #dc2626; }
-        .btn-blue { background: #2563eb; }
-        .btn-amber { background: #d97706; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
-        th, td { border: 1px solid #e2e8f0; padding: 6px; text-align: left; }
-        th { background: #f8fafc; }
-        .del-btn { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+        :root {
+            --primary-color: #1b5e20;
+            --secondary-color: #2e7d32;
+            --accent-color: #4caf50;
+            --light-bg: #e8f5e9;
+            --gold: #ffb300;
+            --dark: #1c2826;
+            --white: #ffffff;
+            --gray-bg: #f8faf8;
+            --border-color: #d1e7dd;
+            --red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Gemunu Libre', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--gray-bg);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--dark);
+            line-height: 1.5;
+            padding-bottom: 60px;
+        }
+
+        .top-bar {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 8px 15px;
+            font-size: 0.82rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar a {
+            color: #bbf7d0;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .discount-announcement-bar {
+            background: var(--gold);
+            color: #111;
+            padding: 6px 15px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: auto;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo-badge {
+            background: #ffffff;
+            border: 2px solid #ffcc00;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .logo-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-title h1 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1.1;
+        }
+
+        .logo-title span {
+            font-size: 0.7rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: block;
+        }
+
+        .header-btns {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-share-top {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-cart-top {
+            background: #d97706;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cart-badge {
+            background: #dc2626;
+            color: white;
+            border-radius: 50%;
+            padding: 1px 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .btn-main {
+            background: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-app-download {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: var(--white);
+            border: none;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ad-slider-section {
+            max-width: 1200px;
+            margin: 12px auto 0;
+            padding: 0 12px;
+        }
+
+        .ad-slider-box {
+            background: #111;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            height: 165px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .ad-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+        }
+
+        .ad-slide.active {
+            display: block;
+        }
+
+        .ad-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+        }
+
+        .ad-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%);
+            display: flex;
+            align-items: flex-end;
+            padding: 12px 16px;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .ad-info h4 {
+            font-size: 1.05rem;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .ad-info p {
+            font-size: 0.78rem;
+            color: #ffeb3b;
+        }
+
+        .btn-add-ad-banner {
+            background: var(--gold);
+            color: #111;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(27, 94, 32, 0.88), rgba(46, 125, 50, 0.88)), url('https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            padding: 28px 15px;
+            text-align: center;
+            border-radius: 12px;
+            max-width: 1200px;
+            margin: 12px auto 0;
+        }
+
+        .hero h2 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .hero p {
+            font-size: 0.88rem;
+            max-width: 720px;
+            margin: auto;
+            color: #e8f5e9;
+        }
+
+        .hero-badges {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .badge-pill {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .search-section {
+            max-width: 1200px;
+            margin: 15px auto 0;
+            padding: 0 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            outline: none;
+            background: #fff;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .btn-track-open {
+            background: #4338ca;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 15px auto;
+            padding: 0 12px;
+        }
+
+        .categories-wrapper {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            margin-bottom: 15px;
+        }
+
+        .cat-btn {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .cat-btn.active {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            .card-img-slider {
+                height: 125px !important;
+            }
+            .card-body {
+                padding: 8px !important;
+            }
+            .card-title {
+                font-size: 0.85rem !important;
+                height: 2.4em;
+                overflow: hidden;
+            }
+            .card-meta {
+                font-size: 0.72rem !important;
+            }
+            .price-breakdown {
+                font-size: 0.72rem !important;
+                padding: 4px 6px !important;
+                margin: 4px 0 !important;
+            }
+            .card-action-btns {
+                flex-direction: column !important;
+                gap: 4px !important;
+            }
+            .btn-action-small {
+                font-size: 0.72rem !important;
+                padding: 5px !important;
+            }
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            position: relative;
+        }
+
+        .card.featured-card {
+            border: 2px solid var(--gold);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: var(--gold);
+            color: #111;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 5;
+        }
+
+        .card-img-slider {
+            height: 170px;
+            position: relative;
+            background: #eee;
+        }
+
+        .card-img-slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .card-cat {
+            font-size: 0.68rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 2px 0 4px;
+        }
+
+        .card-meta {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .price-breakdown {
+            background: var(--light-bg);
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin: 4px 0 8px;
+            font-size: 0.78rem;
+        }
+
+        .price-total {
+            font-weight: 700;
+            color: var(--primary-color);
+            border-top: 1px dashed var(--accent-color);
+            padding-top: 2px;
+            margin-top: 2px;
+        }
+
+        .card-action-btns {
+            margin-top: auto;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action-small {
+            flex: 1;
+            padding: 7px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-call-req { background: #0284c7; color: white; }
+        .btn-msg-inapp { background: #4f46e5; color: white; }
+        .btn-cart-add { background: #f59e0b; color: #111; }
+        .btn-order-wa { background: #25d366; color: white; width: 100%; margin-top: 4px; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            max-width: 550px;
+            margin: 20px auto;
+            border-radius: 12px;
+            padding: 18px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 14px;
+            top: 14px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 3px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.85rem;
+            background: #f8fafc;
+        }
+
+        .float-wa {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25d366;
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            position: relative;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: #cbd5e1;
+            z-index: 1;
+        }
+        .timeline-step { position: relative; z-index: 2; text-align: center; flex: 1; }
+        .timeline-icon {
+            width: 32px;
+            height: 32px;
+            background: #cbd5e1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            color: white;
+            font-size: 0.75rem;
+        }
+        .timeline-step.active .timeline-icon { background: #10b981; }
+        .timeline-step span { font-size: 0.7rem; display: block; margin-top: 4px; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <!-- Login View -->
-    <div id="loginBox" class="login-card">
-        <i class="fa-solid fa-user-shield" style="font-size: 2.5rem; color: #1b5e20; margin-bottom: 10px;"></i>
-        <h2>EDO Admin Login</h2>
-        <p style="font-size:0.8rem; color:#64748b; margin-bottom:15px;">පාලක පුවරුවට පිවිසීමට මුරපදය ඇතුළත් කරන්න</p>
-        <input type="password" id="loginPassField" placeholder="Password ඇතුළත් කරන්න">
-        <button onclick="verifyAdminLogin()" class="btn">Login වන්න</button>
+    <div class="top-bar">
+        <span><i class="fa-solid fa-leaf"></i> 100% Verified දේශීය නිෂ්පාදන</span>
+        <a href="https://wa.me/94784693750" target="_blank" id="topWaLink">
+            <i class="fa-brands fa-whatsapp"></i> <span id="topWaNumber">94784693750</span>
+        </a>
     </div>
 
-    <!-- Admin Dashboard View -->
-    <div id="dashboardBox" class="container" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2><i class="fa-solid fa-gauge"></i> EDO Mega Admin Panel</h2>
-            <a href="index.html" target="_blank" style="background:#0284c7; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:0.8rem; font-weight:700;">වෙබ් අඩවිය බලන්න</a>
-        </div>
+    <div class="discount-announcement-bar" id="topDiscountBanner">
+        <i class="fa-solid fa-gift"></i> <span id="announcementText">විශේෂ දීමනාව: භාණ්ඩ 2කට 15% ක සහ 3කට 25% ක විශේෂ වට්ටමක් හිමිවේ!</span>
+    </div>
 
-        <!-- 1. Change Password with Confirm Password -->
-        <div class="card" style="border-left-color: #dc2626;">
-            <h3><i class="fa-solid fa-key"></i> Admin Password වෙනස් කරන්න (Permanent Save)</h3>
-            <input type="password" id="currPass" placeholder="වත්මන් මුරපදය">
-            <div class="grid-2">
-                <input type="password" id="newPass" placeholder="නව මුරපදය">
-                <input type="password" id="confPass" placeholder="නව මුරපදය තහවුරු කරන්න">
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo-area">
+                <div class="logo-badge" id="logoContainer">
+                    <img src="Gemini_Generated_Image_j0n8wuj0n8wuj0n8%20(1).jpeg" alt="EDO Logo">
+                </div>
+                <div class="logo-title">
+                    <h1>EDO Entrepreneur</h1>
+                    <span>දේශීය ස්වයං රැකියා වෙළඳපොළ</span>
+                </div>
+            </a>
+            <div class="header-btns">
+                <button class="btn-share-top" onclick="triggerWebShare()"><i class="fa-solid fa-share-nodes"></i> Share</button>
+                <button class="btn-cart-top" onclick="openModal('cartModal')"><i class="fa-solid fa-cart-shopping"></i> <span class="cart-badge" id="cartCountBadge">0</span></button>
+                <button class="btn-app-download" onclick="triggerPwaInstall()"><i class="fa-solid fa-download"></i> App</button>
+                <button class="btn-main" onclick="openModal('userProdModal')"><i class="fa-solid fa-plus-circle"></i> ලියාපදිංචිය</button>
             </div>
-            <button onclick="updateAdminPassword()" class="btn btn-red">Password Update කරන්න</button>
         </div>
+    </header>
 
-        <!-- 2. Privacy & Phone Visibility -->
-        <div class="card" style="border-left-color: #2563eb;">
-            <h3><i class="fa-solid fa-eye-slash"></i> Phone Privacy පාලනය</h3>
-            <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:8px;">
-                <input type="checkbox" id="chkPublicPhone" style="width:auto; margin:0;">
-                <span>නිෂ්පාදකයන්ගේ සැබෑ දුරකථන අංක වෙබ් අඩවියේ ප්‍රසිද්ධියේ පෙන්වන්න</span>
-            </label>
-            <button onclick="savePrivacySetting()" class="btn btn-blue">Privacy Setting Save කරන්න</button>
-        </div>
-
-        <!-- 3. Contacts, Fees & Wallpaper -->
-        <div class="card">
-            <h3><i class="fa-solid fa-sliders"></i> WhatsApp අංක, ගාස්තු, Wallpaper සහ Announcement</h3>
-            <div class="grid-2">
-                <div><label style="font-size:0.75rem;">ප්‍රධාන WhatsApp:</label><input type="text" id="inpWa1"></div>
-                <div><label style="font-size:0.75rem;">2nd Store WhatsApp:</label><input type="text" id="inpWa2"></div>
-                <div><label style="font-size:0.75rem;">ලියාපදිංචි ගාස්තුව (Rs):</label><input type="number" id="inpRegFee"></div>
-                <div><label style="font-size:0.75rem;">දැන්වීම් ගාස්තුව (Rs):</label><input type="number" id="inpAdFee"></div>
+    <section class="ad-slider-section">
+        <div class="ad-slider-box" id="adSliderBox">
+            <div class="ad-overlay">
+                <div class="ad-info">
+                    <h4 id="adTitleText">දේශීය නිෂ්පාදන සහ සේවා ප්‍රචාරණය</h4>
+                    <p id="adPhoneText"><i class="fa-brands fa-whatsapp"></i> 0784693750</p>
+                </div>
+                <button class="btn-add-ad-banner" onclick="openModal('userAdModal')">
+                    <i class="fa-solid fa-bullhorn"></i> දැන්වීමක් පළකරන්න (<span id="adFeeBadge">Rs. 1000</span>)
+                </button>
             </div>
-            <label style="font-size:0.75rem;">Announcement Bar Text:</label>
-            <input type="text" id="inpAnn">
-            <label style="font-size:0.75rem;">Background Wallpaper Photo (Gallery එකෙන්):</label>
-            <input type="file" id="inpBgFile" accept="image/*">
-            <button onclick="saveGeneralSettings()" class="btn">සියලු Settings Save කරන්න</button>
+        </div>
+    </section>
+
+    <section class="hero">
+        <h2>දේශීය ස්වයං රැකියා හා නිෂ්පාදන වෙළඳපොළ</h2>
+        <p>නිවසේදීම සාදන ඕනෑම ස්වයං රැකියා නිපැයුමක් අදම ලියාපදිංචි කර දිවයින පුරා පාරිභෝගිකයන් අතරට පහසුවෙන්ම ගෙනයන්න.</p>
+        <div class="hero-badges">
+            <div class="badge-pill"><i class="fa-solid fa-check"></i> ලියාපදිංචි ගාස්තුව: <span id="heroRegFee">රු. 1500</span></div>
+            <div class="badge-pill"><i class="fa-solid fa-percent"></i> 10% සහනදායී සේවා ගාස්තුවක් පමණයි</div>
+            <div class="badge-pill" style="cursor:pointer;" onclick="triggerWebShare()"><i class="fa-solid fa-share-nodes"></i> Share App Link</div>
+        </div>
+    </section>
+
+    <section class="search-section">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="භාණ්ඩයේ නම හෝ නගරය (උදා: කුරුවිට) සොයන්න..." oninput="handleSearch()">
+        </div>
+        <button class="btn-track-open" onclick="openModal('customerTrackModal')">
+            <i class="fa-solid fa-truck-fast"></i> Delivery Tracking
+        </button>
+    </section>
+
+    <main class="main-container">
+        <div class="categories-wrapper">
+            <button class="cat-btn active" onclick="filterCategory('All', this)">සියල්ල</button>
+            <button class="cat-btn" onclick="filterCategory('ආහාර හා පාන', this)">ආහාර හා පාන</button>
+            <button class="cat-btn" onclick="filterCategory('අත්කම් නිර්මාණ', this)">අත්කම් නිර්මාණ</button>
+            <button class="cat-btn" onclick="filterCategory('කාබනික හා පැළෑටි', this)">කාබනික නිෂ්පාදන</button>
+            <button class="cat-btn" onclick="filterCategory('ඇඳුම් හා රෙදිපිළි', this)">ඇඳුම් නිර්මාණ</button>
+            <button class="cat-btn" onclick="filterCategory('ගෘහස්ත නිෂ්පාදන', this)">ගෘහස්ත භාණ්ඩ</button>
         </div>
 
-        <!-- 4. Ad Banners Control -->
-        <div class="card" style="border-left-color: #d97706;">
-            <h3><i class="fa-solid fa-rectangle-ad"></i> Ad Banners එක් කිරීම සහ Delete කිරීම</h3>
-            <div class="grid-2">
-                <input type="text" id="adTitle" placeholder="දැන්වීමේ නම">
-                <input type="text" id="adPhone" placeholder="දුරකථන අංකය">
+        <div class="products-grid" id="productGrid"></div>
+
+        <section style="background:var(--white); border-radius:10px; border:1px solid var(--border-color); padding:16px; margin-top:25px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h3 style="font-size:1.05rem; color:var(--primary-color);"><i class="fa-solid fa-star" style="color:var(--gold);"></i> පාරිභෝගික ප්‍රතිචාර</h3>
+                <button class="btn-main" onclick="openModal('userFeedbackModal')" style="font-size:0.75rem;">
+                    <i class="fa-solid fa-pen"></i> අදහසක් ලියන්න
+                </button>
             </div>
-            <select id="adDays">
-                <option value="7">දින 7ක් සඳහා</option>
-                <option value="14">දින 14ක් සඳහා</option>
-                <option value="30" selected>දින 30ක් සඳහා</option>
-                <option value="60">දින 60ක් සඳහා</option>
-                <option value="365">වසරක් සඳහා</option>
-            </select>
-            <input type="file" id="adFile" accept="image/*">
-            <button onclick="publishBannerAd()" class="btn btn-amber">Banner එක Live කරන්න</button>
+            <div id="liveFeedbackContainer"></div>
+        </section>
+    </main>
 
-            <table>
-                <thead><tr><th>දැන්වීම</th><th>Phone</th><th>කල් ඉකුත්වීම</th><th>Delete</th></tr></thead>
-                <tbody id="adsTableBody"></tbody>
-            </table>
-        </div>
+    <a href="https://wa.me/94784693750" target="_blank" class="float-wa" id="floatingWaLink">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 
-        <!-- 5. Delivery Tracking -->
-        <div class="card" style="border-left-color: #4f46e5;">
-            <h3><i class="fa-solid fa-truck"></i> Delivery Tracking Update කිරීම</h3>
-            <div class="grid-2">
-                <input type="tel" id="trkPhone" placeholder="Customer Phone (07xxxxxxxx)">
-                <input type="text" id="trkCourier" placeholder="Courier Waybill No">
+    <!-- Modals -->
+    <div class="modal" id="customerTrackModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('customerTrackModal')">&times;</span>
+            <h3 style="color:#4338ca; margin-bottom:8px;"><i class="fa-solid fa-truck-fast"></i> ඇණවුම් බෙදාහැරීමේ තත්ත්වය</h3>
+            <div class="form-group">
+                <label>ඔබගේ දුරකථන අංකය ඇතුළත් කරන්න:</label>
+                <div style="display:flex; gap:6px;">
+                    <input type="tel" id="trackCustPhoneInput" placeholder="07xxxxxxxx">
+                    <button onclick="handleCustomerTrackOrder()" class="btn-main" style="background:#4338ca;">සොයන්න</button>
+                </div>
             </div>
-            <select id="trkStatus">
-                <option value="1">1. ඇණවුම තහවුරු විය (Placed)</option>
-                <option value="2">2. ඇසුරුම් කරමින් පවතී (Packed)</option>
-                <option value="3">3. බෙදාහැරීමට පිටත් විය (Dispatched)</option>
-                <option value="4">4. භාර දෙන ලදී (Delivered)</option>
-            </select>
-            <button onclick="saveTracking()" class="btn" style="background:#4f46e5;">Tracking Status Update කරන්න</button>
+            <div id="trackingResultBox" style="display:none; margin-top:15px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px;"></div>
         </div>
+    </div>
 
-        <!-- 6. Add Product with Pin & Auto Expiry -->
-        <div class="card">
-            <h3><i class="fa-solid fa-box"></i> නව භාණ්ඩයක් පළ කරන්න (Pin & Auto-Expiry)</h3>
-            <div class="grid-2">
-                <input type="text" id="pTitle" placeholder="භාණ්ඩයේ නම">
-                <input type="text" id="pSeller" placeholder="නිෂ්පාදකයාගේ නම">
-                <input type="tel" id="pPhone" placeholder="සැබෑ Phone අංකය">
-                <input type="text" id="pLoc" placeholder="නගරය">
-                <input type="number" id="pPrice" placeholder="නියම මිල (රු.)">
-                <select id="pCat">
-                    <option value="ආහාර හා පාන">ආහාර හා පාන</option>
-                    <option value="අත්කම් නිර්මාණ">අත්කම් නිර්මාණ</option>
-                    <option value="කාබනික හා පැළෑටි">කාබනික හා පැළෑටි</option>
-                    <option value="ඇඳුම් හා රෙදිපිළි">ඇඳුම් හා රෙදිපිළි</option>
-                    <option value="ගෘහස්ත නිෂ්පාදන">ගෘහස්ත නිෂ්පාදන</option>
-                </select>
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('cartModal')">&times;</span>
+            <h3 style="color:var(--primary-color); margin-bottom:8px;"><i class="fa-solid fa-cart-shopping"></i> මගේ බාස්කට් එක (Cart)</h3>
+            <div id="cartItemsList" style="max-height:220px; overflow-y:auto; margin-bottom:12px;"></div>
+            <div style="font-weight:700; font-size:1rem; border-top:1px dashed #ccc; padding-top:6px; margin-bottom:12px; display:flex; justify-content:space-between;">
+                <span>මුළු එකතුව:</span>
+                <span id="cartGrandTotal">රු. 0/=</span>
             </div>
-            <select id="pDays">
-                <option value="30">දින 30කින් ඉවත් වන්න</option>
-                <option value="40" selected>දින 40කින් ඉවත් වන්න</option>
-                <option value="50">දින 50කින් ඉවත් වන්න</option>
-                <option value="365">සදාකාලිකව තබන්න</option>
-            </select>
-            <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; margin-bottom:8px;">
-                <input type="checkbox" id="pPinned" style="width:auto; margin:0;">
-                <b>⭐ Featured / Pin to Top (ඉහළින්ම පෙන්වන්න)</b>
-            </label>
-            <input type="file" id="pFiles" accept="image/*" multiple>
-            <button onclick="publishNewProduct()" class="btn">භාණ්ඩය Live කරන්න</button>
-
-            <table>
-                <thead><tr><th>භාණ්ඩය</th><th>නිෂ්පාදකයා</th><th>සැබෑ Phone</th><th>මිල</th><th>Delete</th></tr></thead>
-                <tbody id="prodsTableBody"></tbody>
-            </table>
+            <button onclick="checkoutCartViaWhatsapp()" class="btn-main" style="background:#25d366; width:100%; justify-content:center; padding:10px;">
+                <i class="fa-brands fa-whatsapp"></i> Cart එකේ සියල්ල WhatsApp මඟින් ඇණවුම් කරන්න
+            </button>
         </div>
+    </div>
 
-        <!-- 7. Customer Live Inbox Messages -->
-        <div class="card" style="border-left-color: #7c3aed;">
-            <h3><i class="fa-solid fa-inbox"></i> Customer Live Messages (Inbox)</h3>
-            <div id="inboxList"></div>
+    <div class="modal" id="directMsgModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('directMsgModal')">&times;</span>
+            <h3 style="color:#4f46e5; margin-bottom:6px;"><i class="fa-solid fa-envelope"></i> පණිවිඩයක් එවන්න</h3>
+            <p style="font-size:0.8rem; color:#64748b; margin-bottom:10px;" id="msgModalItemTitle"></p>
+            <form onsubmit="handleSendDirectMessage(event)">
+                <input type="hidden" id="msgTargetProductTitle">
+                <div class="form-group"><label>ඔබගේ නම:</label><input type="text" id="senderCustName" required></div>
+                <div class="form-group"><label>ඔබගේ දුරකථන අංකය:</label><input type="tel" id="senderCustPhone" required></div>
+                <div class="form-group"><label>පණිවිඩය:</label><textarea id="senderCustMsg" rows="3" required></textarea></div>
+                <button type="submit" class="btn-main" style="background:#4f46e5; width:100%; justify-content:center; padding:9px;">පණිවිඩය යවන්න</button>
+            </form>
         </div>
+    </div>
 
-        <!-- 8. Customer Feedback Manager -->
-        <div class="card" style="border-left-color: #ea580c;">
-            <h3><i class="fa-solid fa-comments"></i> Customer Feedbacks (Delete Options)</h3>
-            <div id="feedbackAdminList"></div>
+    <div class="modal" id="userProdModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('userProdModal')">&times;</span>
+            <h3 style="color: var(--primary-color); margin-bottom: 4px;"><i class="fa-solid fa-plus-circle"></i> භාණ්ඩය ලියාපදිංචි කරන්න</h3>
+            <form id="userProdForm" onsubmit="handleUserProdSubmit(event)">
+                <div class="form-group"><label>නිෂ්පාදකයාගේ නම:</label><input type="text" id="upSeller" required></div>
+                <div class="form-group"><label>නගරය:</label><input type="text" id="upLocation" required></div>
+                <div class="form-group"><label>WhatsApp අංකය (ආරක්ෂිතයි):</label><input type="tel" id="upPhone" required></div>
+                <div class="form-group"><label>භාණ්ඩයේ නම:</label><input type="text" id="upTitle" required></div>
+                <div class="form-group"><label>කාණ්ඩය:</label>
+                    <select id="upCat" required>
+                        <option value="ආහාර හා පාන">ආහාර හා පාන</option>
+                        <option value="අත්කම් නිර්මාණ">අත්කම් නිර්මාණ</option>
+                        <option value="කාබනික හා පැළෑටි">කාබනික හා පැළෑටි</option>
+                        <option value="ඇඳුම් හා රෙදිපිළි">ඇඳුම් හා රෙදිපිළි</option>
+                        <option value="ගෘහස්ත නිෂ්පාදන">ගෘහස්ත නිෂ්පාදන</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>නියම මිල (රු.):</label><input type="number" id="upPrice" required></div>
+                <button type="submit" class="btn-main" style="width: 100%; justify-content: center; padding: 10px;">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp වෙත යවා ලියාපදිංචි වන්න
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="userAdModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('userAdModal')">&times;</span>
+            <h3 style="color: #b45309; margin-bottom: 6px;"><i class="fa-solid fa-bullhorn"></i> දැන්වීමක් පළකරන්න</h3>
+            <form onsubmit="handleUserAdSubmit(event)">
+                <div class="form-group"><label>නම / ව්‍යාපාරය:</label><input type="text" id="uaName" required></div>
+                <div class="form-group"><label>WhatsApp අංකය:</label><input type="tel" id="uaPhone" required></div>
+                <div class="form-group"><label>දැන්වීමේ මාතෘකාව:</label><input type="text" id="uaTitle" required></div>
+                <div class="form-group"><label>දින ගණන:</label>
+                    <select id="uaDays" required>
+                        <option value="7">දින 7ක්</option>
+                        <option value="14">දින 14ක්</option>
+                        <option value="30" selected>දින 30ක්</option>
+                        <option value="365">වසරක්</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-main" style="background:#b45309; width: 100%; justify-content: center; padding: 10px;">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp වෙත යොමු කරන්න
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="userFeedbackModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('userFeedbackModal')">&times;</span>
+            <h3 style="color: var(--primary-color); margin-bottom: 6px;"><i class="fa-solid fa-comment-dots"></i> ඔබේ අදහස (Feedback)</h3>
+            <form onsubmit="handleUserFeedbackSubmit(event)">
+                <div class="form-group"><label>නම:</label><input type="text" id="fbCustName" required></div>
+                <div class="form-group"><label>අදහස:</label><textarea id="fbCustMsg" rows="3" required></textarea></div>
+                <div class="form-group"><label>Photo එකක් (අවශ්‍ය නම් පමණක්):</label><input type="file" id="fbCustPhoto" accept="image/*"></div>
+                <button type="submit" class="btn-main" style="width: 100%; justify-content: center; padding: 9px;">අදහස පළ කරන්න</button>
+            </form>
         </div>
     </div>
 
     <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+        function triggerPwaInstall() {
+            if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+            else { alert("බ්‍රවුසරයේ තිත් 3 ඔබා 'Install app' තෝරන්න."); }
+        }
+
+        function triggerWebShare() {
+            const shareData = { title: 'EDO Entrepreneur', text: 'දේශීය ස්වයං රැකියා වෙළඳපොළ!', url: window.location.href };
+            if (navigator.share) navigator.share(shareData).catch(() => {});
+            else { navigator.clipboard.writeText(window.location.href); alert("Link එක Copy විය!"); }
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyDxch4h83PlR9ofU3cdTV5ZZLydm1LzILU",
             authDomain: "edo-store.firebaseapp.com",
@@ -181,10 +877,21 @@
             appId: "1:775728344138:web:a924b4e7cc59b336754ab3",
             measurementId: "G-1K1VYNPMRW"
         };
+
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let currentConfig = { adminPass: "admin123" };
+        let settings = {
+            whatsapp: "94784693750",
+            shop2Whatsapp: "94770000000",
+            regFee: 1500,
+            adFee: 1000,
+            showPhonePublic: false,
+            bgImg: "",
+            announcement: "විශේෂ දීමනාව: භාණ්ඩ 2කට 15% ක සහ 3කට 25% ක විශේෂ වට්ටමක් හිමිවේ!"
+        };
+
+        let products = [], ads = [], cart = [], currentCategory = "All", searchQuery = "", currentAdIdx = 0, adInterval = null;
 
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
@@ -195,162 +902,230 @@
             });
         }
 
-        // Load Settings Realtime
+        // Sync Settings Realtime from Firebase
         db.collection('settings').doc('general_config').onSnapshot(doc => {
-            if (doc.exists) {
-                currentConfig = { ...currentConfig, ...doc.data() };
-            } else {
-                db.collection('settings').doc('general_config').set({ adminPass: "admin123", whatsapp: "94784693750", regFee: 1500, adFee: 1000 });
+            if (doc.exists) settings = { ...settings, ...doc.data() };
+            document.getElementById('topWaNumber').innerText = settings.whatsapp;
+            document.getElementById('topWaLink').href = `https://wa.me/${settings.whatsapp}`;
+            document.getElementById('floatingWaLink').href = `https://wa.me/${settings.whatsapp}`;
+            document.getElementById('announcementText').innerText = settings.announcement;
+            document.getElementById('heroRegFee').innerText = `රු. ${settings.regFee}`;
+            document.getElementById('adFeeBadge').innerText = `Rs. ${settings.adFee}`;
+
+            if (settings.bgImg) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(248, 250, 248, 0.92), rgba(248, 250, 248, 0.92)), url('${settings.bgImg}')`;
             }
-            document.getElementById('inpWa1').value = currentConfig.whatsapp || "";
-            document.getElementById('inpWa2').value = currentConfig.shop2Whatsapp || "";
-            document.getElementById('inpRegFee').value = currentConfig.regFee || 1500;
-            document.getElementById('inpAdFee').value = currentConfig.adFee || 1000;
-            document.getElementById('inpAnn').value = currentConfig.announcement || "";
-            document.getElementById('chkPublicPhone').checked = currentConfig.showPhonePublic || false;
+            renderProducts();
         });
 
-        function verifyAdminLogin() {
-            const entered = document.getElementById('loginPassField').value;
-            if (entered === (currentConfig.adminPass || "admin123")) {
-                document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('dashboardBox').style.display = 'block';
-                loadAdminData();
-            } else {
-                alert("මුරපදය වැරදියි!");
+        // Sync Ads Realtime
+        db.collection('ads').orderBy('createdAt', 'desc').onSnapshot(snap => {
+            ads = [];
+            const now = new Date();
+            snap.forEach(doc => {
+                const d = doc.data();
+                if (d.expireAt && now > (d.expireAt.toDate ? d.expireAt.toDate() : new Date(d.expireAt))) return;
+                ads.push({ id: doc.id, ...d });
+            });
+            initAdSlider();
+        });
+
+        function initAdSlider() {
+            const box = document.getElementById("adSliderBox");
+            box.querySelectorAll('.ad-slide').forEach(s => s.remove());
+            if (ads.length === 0) return;
+
+            ads.forEach((ad, i) => {
+                const slide = document.createElement('div');
+                slide.className = `ad-slide ${i === 0 ? 'active' : ''}`;
+                slide.innerHTML = `<img src="${ad.img}" alt="${ad.title}">`;
+                box.appendChild(slide);
+            });
+            currentAdIdx = 0;
+            document.getElementById('adTitleText').innerText = ads[0].title;
+            document.getElementById('adPhoneText').innerHTML = `<i class="fa-brands fa-whatsapp"></i> ${ads[0].phone}`;
+
+            if (adInterval) clearInterval(adInterval);
+            adInterval = setInterval(() => {
+                const slides = document.querySelectorAll('.ad-slide');
+                if (slides.length > 1) {
+                    slides[currentAdIdx].classList.remove('active');
+                    currentAdIdx = (currentAdIdx + 1) % slides.length;
+                    slides[currentAdIdx].classList.add('active');
+                    document.getElementById('adTitleText').innerText = ads[currentAdIdx].title;
+                    document.getElementById('adPhoneText').innerHTML = `<i class="fa-brands fa-whatsapp"></i> ${ads[currentAdIdx].phone}`;
+                }
+            }, 4000);
+        }
+
+        // Sync Products Realtime
+        db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
+            products = [];
+            const now = new Date();
+            snap.forEach(doc => {
+                const d = doc.data();
+                if (d.expireAt && now > (d.expireAt.toDate ? d.expireAt.toDate() : new Date(d.expireAt))) return;
+                products.push({ id: doc.id, ...d });
+            });
+            products.sort((a, b) => (b.pinned === true ? 1 : 0) - (a.pinned === true ? 1 : 0));
+            renderProducts();
+        });
+
+        function renderProducts() {
+            const grid = document.getElementById("productGrid");
+            let filtered = products;
+            if (currentCategory !== "All") filtered = filtered.filter(p => p.category === currentCategory);
+            if (searchQuery !== "") {
+                filtered = filtered.filter(p => (p.title && p.title.toLowerCase().includes(searchQuery)) || (p.location && p.location.toLowerCase().includes(searchQuery)));
             }
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#777; padding:25px;">කිසිදු නිෂ්පාදනයක් නැත.</p>`;
+                return;
+            }
+            grid.innerHTML = filtered.map(item => {
+                const finalPrice = Math.round(item.basePrice * 1.10);
+                const img = (item.images && item.images.length > 0) ? item.images[0] : 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
+                const phone = settings.showPhonePublic ? (item.phone || '-') : '07X XXX XXXX (ආරක්ෂිතයි)';
+                return `
+                    <div class="card ${item.pinned ? 'featured-card' : ''}">
+                        ${item.pinned ? '<div class="featured-badge"><i class="fa-solid fa-star"></i> Featured</div>' : ''}
+                        <div class="card-img-slider"><img src="${img}" alt="${item.title}"></div>
+                        <div class="card-body">
+                            <span class="card-cat">${item.category}</span>
+                            <h3 class="card-title">${item.title}</h3>
+                            <div class="card-meta">
+                                <div><i class="fa-solid fa-user"></i> ${item.seller}</div>
+                                <div><i class="fa-solid fa-phone"></i> ${phone}</div>
+                                <div><i class="fa-solid fa-location-dot"></i> ${item.location || 'දේශීය'}</div>
+                            </div>
+                            <div class="price-breakdown">
+                                <div>මිල: රු. ${item.basePrice} (+ 10%)</div>
+                                <div class="price-total">විකුණුම් මිල: රු. ${finalPrice}/=</div>
+                            </div>
+                            <div class="card-action-btns">
+                                <button onclick="requestCallAlert('${item.title}', '${item.seller}')" class="btn-action-small btn-call-req"><i class="fa-solid fa-phone-volume"></i> Call</button>
+                                <button onclick="openDirectMsgModal('${item.title}')" class="btn-action-small btn-msg-inapp"><i class="fa-solid fa-envelope"></i> Msg</button>
+                                <button onclick="addToCart('${item.id}', '${item.title}', ${finalPrice})" class="btn-action-small btn-cart-add"><i class="fa-solid fa-cart-plus"></i> Cart</button>
+                                <button onclick="handleCustomerOrder('${item.title}', '${item.seller}', ${finalPrice})" class="btn-action-small btn-order-wa"><i class="fa-brands fa-whatsapp"></i> Buy</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function updateAdminPassword() {
-            const curr = document.getElementById('currPass').value;
-            const n1 = document.getElementById('newPass').value;
-            const n2 = document.getElementById('confPass').value;
-
-            if (curr !== (currentConfig.adminPass || "admin123")) return alert("වත්මන් මුරපදය වැරදියි!");
-            if (!n1 || n1.length < 4) return alert("නව මුරපදය අක්ෂර 4කට වඩා දිග විය යුතුය!");
-            if (n1 !== n2) return alert("නව මුරපදය සහ Confirm Password නොගැළපේ!");
-
-            db.collection('settings').doc('general_config').set({ adminPass: n1 }, { merge: true }).then(() => {
-                alert("Password එක ස්ථිරවම වෙනස් විය! ඊළඟ වතාවේ අලුත් Password එක භාවිතා කරන්න.");
-                document.getElementById('currPass').value = '';
-                document.getElementById('newPass').value = '';
-                document.getElementById('confPass').value = '';
-            });
+        function requestCallAlert(title, seller) {
+            const cust = prompt("ඔබගේ නම සහ දුරකථන අංකය ඇතුළත් කරන්න:");
+            if (!cust) return;
+            const msg = encodeURIComponent(`📞 *EDO Call Request!*\n• භාණ්ඩය: ${title}\n• නිෂ්පාදකයා: ${seller}\n• පාරිභෝගික විස්තර: ${cust}`);
+            window.open(`https://wa.me/${settings.whatsapp}?text=${msg}`, '_blank');
         }
 
-        function savePrivacySetting() {
-            const val = document.getElementById('chkPublicPhone').checked;
-            db.collection('settings').doc('general_config').set({ showPhonePublic: val }, { merge: true }).then(() => alert("Privacy Setting Save විය!"));
+        function openDirectMsgModal(title) {
+            document.getElementById('msgTargetProductTitle').value = title;
+            document.getElementById('msgModalItemTitle').innerText = "භාණ්ඩය: " + title;
+            openModal('directMsgModal');
         }
 
-        async function saveGeneralSettings() {
-            const payload = {
-                whatsapp: document.getElementById('inpWa1').value.trim(),
-                shop2Whatsapp: document.getElementById('inpWa2').value.trim(),
-                regFee: parseFloat(document.getElementById('inpRegFee').value) || 1500,
-                adFee: parseFloat(document.getElementById('inpAdFee').value) || 1000,
-                announcement: document.getElementById('inpAnn').value
-            };
-            const bgFile = document.getElementById('inpBgFile').files[0];
-            if (bgFile) payload.bgImg = await fileToBase64(bgFile);
+        function handleSendDirectMessage(e) {
+            e.preventDefault();
+            const prodTitle = document.getElementById('msgTargetProductTitle').value;
+            const name = document.getElementById('senderCustName').value.trim();
+            const phone = document.getElementById('senderCustPhone').value.trim();
+            const message = document.getElementById('senderCustMsg').value.trim();
 
-            db.collection('settings').doc('general_config').set(payload, { merge: true }).then(() => alert("Settings Save විය!"));
-        }
-
-        async function publishBannerAd() {
-            const title = document.getElementById('adTitle').value.trim();
-            const phone = document.getElementById('adPhone').value.trim();
-            const days = parseInt(document.getElementById('adDays').value) || 30;
-            const file = document.getElementById('adFile').files[0];
-            if (!title || !file) return alert("විස්තර සහ Photo එක තෝරන්න!");
-
-            const exp = new Date(); exp.setDate(exp.getDate() + days);
-            const img = await fileToBase64(file);
-
-            db.collection('ads').add({
-                title, phone: phone || currentConfig.whatsapp, img, expireAt: exp, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            db.collection('inquiries').add({
+                productTitle: prodTitle, customerName: name, customerPhone: phone, message, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                alert(`Banner එක දින ${days}ක් සඳහා Live විය!`);
-                document.getElementById('adTitle').value = '';
-                document.getElementById('adPhone').value = '';
-                document.getElementById('adFile').value = '';
+                alert("පණිවිඩය සාර්ථකව යොමු විය!");
+                closeModal('directMsgModal');
+                const msg = encodeURIComponent(`✉️ *නව Message එකක්!*\n• භාණ්ඩය: ${prodTitle}\n• නම: ${name} (${phone})\n• පණිවිඩය: ${message}`);
+                window.open(`https://wa.me/${settings.whatsapp}?text=${msg}`, '_blank');
             });
         }
 
-        function saveTracking() {
-            const phone = document.getElementById('trkPhone').value.trim();
-            const courierNo = document.getElementById('trkCourier').value.trim();
-            const status = document.getElementById('trkStatus').value;
+        function addToCart(id, title, price) {
+            cart.push({ id, title, price });
+            document.getElementById('cartCountBadge').innerText = cart.length;
+            let total = 0;
+            document.getElementById('cartItemsList').innerHTML = cart.map((item, idx) => {
+                total += item.price;
+                return `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; font-size:0.85rem;"><span>${item.title}</span><span>රු. ${item.price}/=</span></div>`;
+            }).join('');
+            document.getElementById('cartGrandTotal').innerText = `රු. ${total}/=`;
+            alert(`"${title}" Cart එකට එකතු විය!`);
+        }
+
+        function checkoutCartViaWhatsapp() {
+            if (cart.length === 0) return alert("Cart එක හිස්ය!");
+            let total = 0;
+            const list = cart.map((it, i) => { total += it.price; return `${i+1}. ${it.title} - රු. ${it.price}/=`; }).join('\n');
+            window.open(`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(`🛒 *EDO Cart ඇණවුම:*\n\n${list}\n\n*මුළු එකතුව: රු. ${total}/=*`)}`, '_blank');
+        }
+
+        function handleCustomerOrder(title, seller, price) {
+            const msg = encodeURIComponent(`*EDO Entrepreneur ඇණවුම:*\n• භාණ්ඩය: ${title}\n• නිෂ්පාදකයා: ${seller}\n• මිල: රු. ${price}/=`);
+            window.open(`https://wa.me/${settings.whatsapp}?text=${msg}`, '_blank');
+        }
+
+        function handleUserProdSubmit(e) {
+            e.preventDefault();
+            const msg = encodeURIComponent(`*EDO නව භාණ්ඩ ලියාපදිංචිය*\n• නම: ${document.getElementById('upSeller').value}\n• නගරය: ${document.getElementById('upLocation').value}\n• Phone: ${document.getElementById('upPhone').value}\n• භාණ්ඩය: ${document.getElementById('upTitle').value}\n• මිල: රු. ${document.getElementById('upPrice').value}`);
+            window.open(`https://wa.me/${settings.whatsapp}?text=${msg}`, '_blank');
+            closeModal('userProdModal');
+        }
+
+        function handleUserAdSubmit(e) {
+            e.preventDefault();
+            const msg = encodeURIComponent(`*EDO දැන්වීම් ඉල්ලීම*\n• නම: ${document.getElementById('uaName').value}\n• Phone: ${document.getElementById('uaPhone').value}\n• මාතෘකාව: ${document.getElementById('uaTitle').value}\n• දින ගණන: දින ${document.getElementById('uaDays').value}`);
+            window.open(`https://wa.me/${settings.whatsapp}?text=${msg}`, '_blank');
+            closeModal('userAdModal');
+        }
+
+        async function handleUserFeedbackSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('fbCustName').value.trim();
+            const message = document.getElementById('fbCustMsg').value.trim();
+            const file = document.getElementById('fbCustPhoto').files[0];
+            const photo = file ? await fileToBase64(file) : "";
+            db.collection('feedbacks').add({ name, message, photo, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
+                alert("ස්තුතියි!");
+                closeModal('userFeedbackModal');
+            });
+        }
+
+        db.collection('feedbacks').orderBy('createdAt', 'desc').onSnapshot(snap => {
+            const box = document.getElementById('liveFeedbackContainer');
+            box.innerHTML = snap.empty ? '<p style="color:#888; font-size:0.85rem;">ප්‍රතිචාර නොමැත.</p>' : '';
+            snap.forEach(doc => {
+                const d = doc.data();
+                box.innerHTML += `<div style="background:#f8fafc; border-left:3px solid var(--primary-color); padding:8px 12px; margin-bottom:8px; font-size:0.82rem;"><b>${d.name}</b><br>${d.message}${d.photo ? `<br><img src="${d.photo}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; margin-top:4px;">` : ''}</div>`;
+            });
+        });
+
+        function handleCustomerTrackOrder() {
+            const phone = document.getElementById('trackCustPhoneInput').value.trim();
+            const box = document.getElementById('trackingResultBox');
             if (!phone) return alert("Phone අංකය ඇතුළත් කරන්න!");
-
-            db.collection('deliveries').doc(phone).set({ courierNo, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
-                alert("Tracking Update විය!");
+            db.collection('deliveries').doc(phone).get().then(doc => {
+                box.style.display = "block";
+                if (!doc.exists) { box.innerHTML = `<p style="font-size:0.85rem; color:#dc2626;">ඇණවුමක් සොයාගත නොහැකි විය.</p>`; return; }
+                const data = doc.data();
+                const step = parseInt(data.status) || 1;
+                box.innerHTML = `<div><b>Courier Tracking No:</b> <span style="color:#4338ca;">${data.courierNo || '-'}</span></div>
+                <div class="timeline">
+                    <div class="timeline-step ${step>=1?'active':''}"><div class="timeline-icon">1</div><span>Placed</span></div>
+                    <div class="timeline-step ${step>=2?'active':''}"><div class="timeline-icon">2</div><span>Packed</span></div>
+                    <div class="timeline-step ${step>=3?'active':''}"><div class="timeline-icon">3</div><span>Dispatched</span></div>
+                    <div class="timeline-step ${step>=4?'active':''}"><div class="timeline-icon">4</div><span>Delivered</span></div>
+                </div>`;
             });
         }
 
-        async function publishNewProduct() {
-            const title = document.getElementById('pTitle').value.trim();
-            const seller = document.getElementById('pSeller').value.trim();
-            const phone = document.getElementById('pPhone').value.trim();
-            const location = document.getElementById('pLoc').value.trim();
-            const basePrice = parseFloat(document.getElementById('pPrice').value);
-            const category = document.getElementById('pCat').value;
-            const days = parseInt(document.getElementById('pDays').value) || 40;
-            const pinned = document.getElementById('pPinned').checked;
-            const files = document.getElementById('pFiles').files;
-
-            if (!title || !basePrice || files.length === 0) return alert("සියලු විස්තර සහ Photo 1ක්වත් තෝරන්න!");
-
-            const exp = new Date(); exp.setDate(exp.getDate() + days);
-            let images = [];
-            for (let i = 0; i < Math.min(files.length, 3); i++) images.push(await fileToBase64(files[i]));
-
-            db.collection('products').add({
-                title, seller: seller || "EDO Verified", phone: phone || "-", location: location || "ශ්‍රී ලංකාව",
-                basePrice, category, images, pinned, expireAt: exp, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert(`භාණ්ඩය දින ${days}ක් සඳහා Live විය!`);
-                document.getElementById('pTitle').value = '';
-                document.getElementById('pPrice').value = '';
-                document.getElementById('pFiles').value = '';
-                document.getElementById('pPinned').checked = false;
-            });
-        }
-
-        function loadAdminData() {
-            // Ads
-            db.collection('ads').orderBy('createdAt', 'desc').onSnapshot(snap => {
-                document.getElementById('adsTableBody').innerHTML = snap.docs.map(doc => {
-                    const d = doc.data();
-                    const exp = d.expireAt ? (d.expireAt.toDate ? d.expireAt.toDate() : new Date(d.expireAt)).toLocaleDateString() : '-';
-                    return `<tr><td>${d.title}</td><td>${d.phone}</td><td>${exp}</td><td><button class="del-btn" onclick="db.collection('ads').doc('${doc.id}').delete()">Delete</button></td></tr>`;
-                }).join('');
-            });
-
-            // Products
-            db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
-                document.getElementById('prodsTableBody').innerHTML = snap.docs.map(doc => {
-                    const d = doc.data();
-                    return `<tr><td>${d.pinned?'⭐ ':''}${d.title}</td><td>${d.seller}</td><td><b>${d.phone || '-'}</b></td><td>Rs. ${d.basePrice}</td><td><button class="del-btn" onclick="db.collection('products').doc('${doc.id}').delete()">Delete</button></td></tr>`;
-                }).join('');
-            });
-
-            // Inbox
-            db.collection('inquiries').orderBy('createdAt', 'desc').onSnapshot(snap => {
-                document.getElementById('inboxList').innerHTML = snap.empty ? '<p style="font-size:0.8rem;color:#888;">පණිවිඩ නොමැත.</p>' : snap.docs.map(doc => {
-                    const d = doc.data();
-                    return `<div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.82rem;"><b>${d.customerName} (${d.customerPhone})</b> | ${d.productTitle}<br>${d.message}</div>`;
-                }).join('');
-            });
-
-            // Feedbacks
-            db.collection('feedbacks').orderBy('createdAt', 'desc').onSnapshot(snap => {
-                document.getElementById('feedbackAdminList').innerHTML = snap.empty ? '<p style="font-size:0.8rem;color:#888;">ප්‍රතිචාර නොමැත.</p>' : snap.docs.map(doc => {
-                    const d = doc.data();
-                    return `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:6px 0; font-size:0.82rem;"><span><b>${d.name}:</b> ${d.message}</span><button class="del-btn" onclick="db.collection('feedbacks').doc('${doc.id}').delete()">Delete</button></div>`;
-                }).join('');
-            });
-        }
+        function filterCategory(cat, btn) { currentCategory = cat; document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderProducts(); }
+        function handleSearch() { searchQuery = document.getElementById('searchInput').value.trim().toLowerCase(); renderProducts(); }
+        function openModal(id) { document.getElementById(id).style.display = "block"; }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
     </script>
 </body>
 </html>
