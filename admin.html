@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDO Admin Control Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gemunu+Libre:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Gemunu Libre', sans-serif; }
+        body { background: #f1f5f9; color: #1e293b; padding: 15px; }
+        .container { max-width: 800px; margin: auto; }
+        .login-card { background: white; max-width: 400px; margin: 80px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .card { background: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #1b5e20; }
+        h2 { color: #1b5e20; margin-bottom: 12px; font-size: 1.35rem; }
+        h3 { font-size: 1rem; margin-bottom: 10px; color: #0f172a; }
+        input, select { width: 100%; padding: 9px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem; }
+        .btn { background: #1b5e20; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; width: 100%; font-size: 0.9rem; }
+        .btn-red { background: #dc2626; }
+        .btn-blue { background: #2563eb; }
+        .btn-amber { background: #d97706; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
+        th, td { border: 1px solid #e2e8f0; padding: 6px; text-align: left; }
+        th { background: #f8fafc; }
+        .del-btn { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- Login View -->
+    <div id="loginBox" class="login-card">
+        <i class="fa-solid fa-user-shield" style="font-size: 2.5rem; color: #1b5e20; margin-bottom: 10px;"></i>
+        <h2>EDO Admin Login</h2>
+        <p style="font-size:0.8rem; color:#64748b; margin-bottom:15px;">පාලක පුවරුවට පිවිසීමට මුරපදය ඇතුළත් කරන්න</p>
+        <input type="password" id="loginPassField" placeholder="Password ඇතුළත් කරන්න">
+        <button onclick="verifyAdminLogin()" class="btn">Login වන්න</button>
+    </div>
+
+    <!-- Admin Dashboard View -->
+    <div id="dashboardBox" class="container" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2><i class="fa-solid fa-gauge"></i> EDO Mega Admin Panel</h2>
+            <a href="index.html" target="_blank" style="background:#0284c7; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:0.8rem; font-weight:700;">වෙබ් අඩවිය බලන්න</a>
+        </div>
+
+        <!-- 1. Change Password with Confirm Password -->
+        <div class="card" style="border-left-color: #dc2626;">
+            <h3><i class="fa-solid fa-key"></i> Admin Password වෙනස් කරන්න (Permanent Save)</h3>
+            <input type="password" id="currPass" placeholder="වත්මන් මුරපදය">
+            <div class="grid-2">
+                <input type="password" id="newPass" placeholder="නව මුරපදය">
+                <input type="password" id="confPass" placeholder="නව මුරපදය තහවුරු කරන්න">
+            </div>
+            <button onclick="updateAdminPassword()" class="btn btn-red">Password Update කරන්න</button>
+        </div>
+
+        <!-- 2. Privacy & Phone Visibility -->
+        <div class="card" style="border-left-color: #2563eb;">
+            <h3><i class="fa-solid fa-eye-slash"></i> Phone Privacy පාලනය</h3>
+            <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:8px;">
+                <input type="checkbox" id="chkPublicPhone" style="width:auto; margin:0;">
+                <span>නිෂ්පාදකයන්ගේ සැබෑ දුරකථන අංක වෙබ් අඩවියේ ප්‍රසිද්ධියේ පෙන්වන්න</span>
+            </label>
+            <button onclick="savePrivacySetting()" class="btn btn-blue">Privacy Setting Save කරන්න</button>
+        </div>
+
+        <!-- 3. Contacts, Fees & Wallpaper -->
+        <div class="card">
+            <h3><i class="fa-solid fa-sliders"></i> WhatsApp අංක, ගාස්තු, Wallpaper සහ Announcement</h3>
+            <div class="grid-2">
+                <div><label style="font-size:0.75rem;">ප්‍රධාන WhatsApp:</label><input type="text" id="inpWa1"></div>
+                <div><label style="font-size:0.75rem;">2nd Store WhatsApp:</label><input type="text" id="inpWa2"></div>
+                <div><label style="font-size:0.75rem;">ලියාපදිංචි ගාස්තුව (Rs):</label><input type="number" id="inpRegFee"></div>
+                <div><label style="font-size:0.75rem;">දැන්වීම් ගාස්තුව (Rs):</label><input type="number" id="inpAdFee"></div>
+            </div>
+            <label style="font-size:0.75rem;">Announcement Bar Text:</label>
+            <input type="text" id="inpAnn">
+            <label style="font-size:0.75rem;">Background Wallpaper Photo (Gallery එකෙන්):</label>
+            <input type="file" id="inpBgFile" accept="image/*">
+            <button onclick="saveGeneralSettings()" class="btn">සියලු Settings Save කරන්න</button>
+        </div>
+
+        <!-- 4. Ad Banners Control -->
+        <div class="card" style="border-left-color: #d97706;">
+            <h3><i class="fa-solid fa-rectangle-ad"></i> Ad Banners එක් කිරීම සහ Delete කිරීම</h3>
+            <div class="grid-2">
+                <input type="text" id="adTitle" placeholder="දැන්වීමේ නම">
+                <input type="text" id="adPhone" placeholder="දුරකථන අංකය">
+            </div>
+            <select id="adDays">
+                <option value="7">දින 7ක් සඳහා</option>
+                <option value="14">දින 14ක් සඳහා</option>
+                <option value="30" selected>දින 30ක් සඳහා</option>
+                <option value="60">දින 60ක් සඳහා</option>
+                <option value="365">වසරක් සඳහා</option>
+            </select>
+            <input type="file" id="adFile" accept="image/*">
+            <button onclick="publishBannerAd()" class="btn btn-amber">Banner එක Live කරන්න</button>
+
+            <table>
+                <thead><tr><th>දැන්වීම</th><th>Phone</th><th>කල් ඉකුත්වීම</th><th>Delete</th></tr></thead>
+                <tbody id="adsTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 5. Delivery Tracking -->
+        <div class="card" style="border-left-color: #4f46e5;">
+            <h3><i class="fa-solid fa-truck"></i> Delivery Tracking Update කිරීම</h3>
+            <div class="grid-2">
+                <input type="tel" id="trkPhone" placeholder="Customer Phone (07xxxxxxxx)">
+                <input type="text" id="trkCourier" placeholder="Courier Waybill No">
+            </div>
+            <select id="trkStatus">
+                <option value="1">1. ඇණවුම තහවුරු විය (Placed)</option>
+                <option value="2">2. ඇසුරුම් කරමින් පවතී (Packed)</option>
+                <option value="3">3. බෙදාහැරීමට පිටත් විය (Dispatched)</option>
+                <option value="4">4. භාර දෙන ලදී (Delivered)</option>
+            </select>
+            <button onclick="saveTracking()" class="btn" style="background:#4f46e5;">Tracking Status Update කරන්න</button>
+        </div>
+
+        <!-- 6. Add Product with Pin & Auto Expiry -->
+        <div class="card">
+            <h3><i class="fa-solid fa-box"></i> නව භාණ්ඩයක් පළ කරන්න (Pin & Auto-Expiry)</h3>
+            <div class="grid-2">
+                <input type="text" id="pTitle" placeholder="භාණ්ඩයේ නම">
+                <input type="text" id="pSeller" placeholder="නිෂ්පාදකයාගේ නම">
+                <input type="tel" id="pPhone" placeholder="සැබෑ Phone අංකය">
+                <input type="text" id="pLoc" placeholder="නගරය">
+                <input type="number" id="pPrice" placeholder="නියම මිල (රු.)">
+                <select id="pCat">
+                    <option value="ආහාර හා පාන">ආහාර හා පාන</option>
+                    <option value="අත්කම් නිර්මාණ">අත්කම් නිර්මාණ</option>
+                    <option value="කාබනික හා පැළෑටි">කාබනික හා පැළෑටි</option>
+                    <option value="ඇඳුම් හා රෙදිපිළි">ඇඳුම් හා රෙදිපිළි</option>
+                    <option value="ගෘහස්ත නිෂ්පාදන">ගෘහස්ත නිෂ්පාදන</option>
+                </select>
+            </div>
+            <select id="pDays">
+                <option value="30">දින 30කින් ඉවත් වන්න</option>
+                <option value="40" selected>දින 40කින් ඉවත් වන්න</option>
+                <option value="50">දින 50කින් ඉවත් වන්න</option>
+                <option value="365">සදාකාලිකව තබන්න</option>
+            </select>
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; margin-bottom:8px;">
+                <input type="checkbox" id="pPinned" style="width:auto; margin:0;">
+                <b>⭐ Featured / Pin to Top (ඉහළින්ම පෙන්වන්න)</b>
+            </label>
+            <input type="file" id="pFiles" accept="image/*" multiple>
+            <button onclick="publishNewProduct()" class="btn">භාණ්ඩය Live කරන්න</button>
+
+            <table>
+                <thead><tr><th>භාණ්ඩය</th><th>නිෂ්පාදකයා</th><th>සැබෑ Phone</th><th>මිල</th><th>Delete</th></tr></thead>
+                <tbody id="prodsTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 7. Customer Live Inbox Messages -->
+        <div class="card" style="border-left-color: #7c3aed;">
+            <h3><i class="fa-solid fa-inbox"></i> Customer Live Messages (Inbox)</h3>
+            <div id="inboxList"></div>
+        </div>
+
+        <!-- 8. Customer Feedback Manager -->
+        <div class="card" style="border-left-color: #ea580c;">
+            <h3><i class="fa-solid fa-comments"></i> Customer Feedbacks (Delete Options)</h3>
+            <div id="feedbackAdminList"></div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxch4h83PlR9ofU3cdTV5ZZLydm1LzILU",
+            authDomain: "edo-store.firebaseapp.com",
+            projectId: "edo-store",
+            storageBucket: "edo-store.firebasestorage.app",
+            messagingSenderId: "775728344138",
+            appId: "1:775728344138:web:a924b4e7cc59b336754ab3",
+            measurementId: "G-1K1VYNPMRW"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let currentConfig = { adminPass: "admin123" };
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = e => reject(e);
+            });
+        }
+
+        // Load Settings Realtime
+        db.collection('settings').doc('general_config').onSnapshot(doc => {
+            if (doc.exists) {
+                currentConfig = { ...currentConfig, ...doc.data() };
+            } else {
+                db.collection('settings').doc('general_config').set({ adminPass: "admin123", whatsapp: "94784693750", regFee: 1500, adFee: 1000 });
+            }
+            document.getElementById('inpWa1').value = currentConfig.whatsapp || "";
+            document.getElementById('inpWa2').value = currentConfig.shop2Whatsapp || "";
+            document.getElementById('inpRegFee').value = currentConfig.regFee || 1500;
+            document.getElementById('inpAdFee').value = currentConfig.adFee || 1000;
+            document.getElementById('inpAnn').value = currentConfig.announcement || "";
+            document.getElementById('chkPublicPhone').checked = currentConfig.showPhonePublic || false;
+        });
+
+        function verifyAdminLogin() {
+            const entered = document.getElementById('loginPassField').value;
+            if (entered === (currentConfig.adminPass || "admin123")) {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('dashboardBox').style.display = 'block';
+                loadAdminData();
+            } else {
+                alert("මුරපදය වැරදියි!");
+            }
+        }
+
+        function updateAdminPassword() {
+            const curr = document.getElementById('currPass').value;
+            const n1 = document.getElementById('newPass').value;
+            const n2 = document.getElementById('confPass').value;
+
+            if (curr !== (currentConfig.adminPass || "admin123")) return alert("වත්මන් මුරපදය වැරදියි!");
+            if (!n1 || n1.length < 4) return alert("නව මුරපදය අක්ෂර 4කට වඩා දිග විය යුතුය!");
+            if (n1 !== n2) return alert("නව මුරපදය සහ Confirm Password නොගැළපේ!");
+
+            db.collection('settings').doc('general_config').set({ adminPass: n1 }, { merge: true }).then(() => {
+                alert("Password එක ස්ථිරවම වෙනස් විය! ඊළඟ වතාවේ අලුත් Password එක භාවිතා කරන්න.");
+                document.getElementById('currPass').value = '';
+                document.getElementById('newPass').value = '';
+                document.getElementById('confPass').value = '';
+            });
+        }
+
+        function savePrivacySetting() {
+            const val = document.getElementById('chkPublicPhone').checked;
+            db.collection('settings').doc('general_config').set({ showPhonePublic: val }, { merge: true }).then(() => alert("Privacy Setting Save විය!"));
+        }
+
+        async function saveGeneralSettings() {
+            const payload = {
+                whatsapp: document.getElementById('inpWa1').value.trim(),
+                shop2Whatsapp: document.getElementById('inpWa2').value.trim(),
+                regFee: parseFloat(document.getElementById('inpRegFee').value) || 1500,
+                adFee: parseFloat(document.getElementById('inpAdFee').value) || 1000,
+                announcement: document.getElementById('inpAnn').value
+            };
+            const bgFile = document.getElementById('inpBgFile').files[0];
+            if (bgFile) payload.bgImg = await fileToBase64(bgFile);
+
+            db.collection('settings').doc('general_config').set(payload, { merge: true }).then(() => alert("Settings Save විය!"));
+        }
+
+        async function publishBannerAd() {
+            const title = document.getElementById('adTitle').value.trim();
+            const phone = document.getElementById('adPhone').value.trim();
+            const days = parseInt(document.getElementById('adDays').value) || 30;
+            const file = document.getElementById('adFile').files[0];
+            if (!title || !file) return alert("විස්තර සහ Photo එක තෝරන්න!");
+
+            const exp = new Date(); exp.setDate(exp.getDate() + days);
+            const img = await fileToBase64(file);
+
+            db.collection('ads').add({
+                title, phone: phone || currentConfig.whatsapp, img, expireAt: exp, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert(`Banner එක දින ${days}ක් සඳහා Live විය!`);
+                document.getElementById('adTitle').value = '';
+                document.getElementById('adPhone').value = '';
+                document.getElementById('adFile').value = '';
+            });
+        }
+
+        function saveTracking() {
+            const phone = document.getElementById('trkPhone').value.trim();
+            const courierNo = document.getElementById('trkCourier').value.trim();
+            const status = document.getElementById('trkStatus').value;
+            if (!phone) return alert("Phone අංකය ඇතුළත් කරන්න!");
+
+            db.collection('deliveries').doc(phone).set({ courierNo, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
+                alert("Tracking Update විය!");
+            });
+        }
+
+        async function publishNewProduct() {
+            const title = document.getElementById('pTitle').value.trim();
+            const seller = document.getElementById('pSeller').value.trim();
+            const phone = document.getElementById('pPhone').value.trim();
+            const location = document.getElementById('pLoc').value.trim();
+            const basePrice = parseFloat(document.getElementById('pPrice').value);
+            const category = document.getElementById('pCat').value;
+            const days = parseInt(document.getElementById('pDays').value) || 40;
+            const pinned = document.getElementById('pPinned').checked;
+            const files = document.getElementById('pFiles').files;
+
+            if (!title || !basePrice || files.length === 0) return alert("සියලු විස්තර සහ Photo 1ක්වත් තෝරන්න!");
+
+            const exp = new Date(); exp.setDate(exp.getDate() + days);
+            let images = [];
+            for (let i = 0; i < Math.min(files.length, 3); i++) images.push(await fileToBase64(files[i]));
+
+            db.collection('products').add({
+                title, seller: seller || "EDO Verified", phone: phone || "-", location: location || "ශ්‍රී ලංකාව",
+                basePrice, category, images, pinned, expireAt: exp, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert(`භාණ්ඩය දින ${days}ක් සඳහා Live විය!`);
+                document.getElementById('pTitle').value = '';
+                document.getElementById('pPrice').value = '';
+                document.getElementById('pFiles').value = '';
+                document.getElementById('pPinned').checked = false;
+            });
+        }
+
+        function loadAdminData() {
+            // Ads
+            db.collection('ads').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                document.getElementById('adsTableBody').innerHTML = snap.docs.map(doc => {
+                    const d = doc.data();
+                    const exp = d.expireAt ? (d.expireAt.toDate ? d.expireAt.toDate() : new Date(d.expireAt)).toLocaleDateString() : '-';
+                    return `<tr><td>${d.title}</td><td>${d.phone}</td><td>${exp}</td><td><button class="del-btn" onclick="db.collection('ads').doc('${doc.id}').delete()">Delete</button></td></tr>`;
+                }).join('');
+            });
+
+            // Products
+            db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                document.getElementById('prodsTableBody').innerHTML = snap.docs.map(doc => {
+                    const d = doc.data();
+                    return `<tr><td>${d.pinned?'⭐ ':''}${d.title}</td><td>${d.seller}</td><td><b>${d.phone || '-'}</b></td><td>Rs. ${d.basePrice}</td><td><button class="del-btn" onclick="db.collection('products').doc('${doc.id}').delete()">Delete</button></td></tr>`;
+                }).join('');
+            });
+
+            // Inbox
+            db.collection('inquiries').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                document.getElementById('inboxList').innerHTML = snap.empty ? '<p style="font-size:0.8rem;color:#888;">පණිවිඩ නොමැත.</p>' : snap.docs.map(doc => {
+                    const d = doc.data();
+                    return `<div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.82rem;"><b>${d.customerName} (${d.customerPhone})</b> | ${d.productTitle}<br>${d.message}</div>`;
+                }).join('');
+            });
+
+            // Feedbacks
+            db.collection('feedbacks').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                document.getElementById('feedbackAdminList').innerHTML = snap.empty ? '<p style="font-size:0.8rem;color:#888;">ප්‍රතිචාර නොමැත.</p>' : snap.docs.map(doc => {
+                    const d = doc.data();
+                    return `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:6px 0; font-size:0.82rem;"><span><b>${d.name}:</b> ${d.message}</span><button class="del-btn" onclick="db.collection('feedbacks').doc('${doc.id}').delete()">Delete</button></div>`;
+                }).join('');
+            });
+        }
+    </script>
+</body>
+</html>
