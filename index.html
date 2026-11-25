@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EDO Entrepreneur - දේශීය අභිමානය හා ස්වයං රැකියා වෙළඳපොළ</title>
     
-    <!-- PWA Settings -->
     <meta name="theme-color" content="#ffcc00">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="EDO App">
 
-    <!-- PWA Manifest & Icon -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_j0n8wuj0n8wuj0n8%20(1).jpeg">
+    <link rel="apple-touch-icon" href="Gemini_Generated_Image_j0n8wuj0n8wuj0n8%20(1).jpeg">
 
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Gemunu+Libre:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -675,7 +673,7 @@
             <div class="header-btns">
                 <button class="btn-share-top" onclick="triggerWebShare()"><i class="fa-solid fa-share-nodes"></i> Share</button>
                 <button class="btn-cart-top" onclick="openModal('cartModal')"><i class="fa-solid fa-cart-shopping"></i> <span class="cart-badge" id="cartCountBadge">0</span></button>
-                <button class="btn-app-download" onclick="triggerPwaInstall()"><i class="fa-solid fa-download"></i> App</button>
+                <button class="btn-app-download" id="btnInstallPwa" onclick="triggerPwaInstall()"><i class="fa-solid fa-download"></i> App</button>
                 <button class="btn-main" onclick="openModal('userProdModal')"><i class="fa-solid fa-plus-circle"></i> ලියාපදිංචිය</button>
             </div>
         </div>
@@ -852,14 +850,32 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
         }
 
         let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
-        function triggerPwaInstall() {
-            if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
-            else { alert("බ්‍රවුසරයේ තිත් 3 ඔබා 'Install app' තෝරන්න."); }
+        const installBtn = document.getElementById('btnInstallPwa');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) {
+                installBtn.innerHTML = '<i class="fa-solid fa-download"></i> Install App';
+            }
+        });
+
+        async function triggerPwaInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    deferredPrompt = null;
+                }
+            } else {
+                alert("තත්පර 5ක් රැඳී සිට පිටුව Refresh කර නැවත 'App' ඔබන්න. (නැතහොත් ඇප් එක දැනටමත් Install වී ඇත).");
+            }
         }
 
         function triggerWebShare() {
@@ -868,6 +884,7 @@
             else { navigator.clipboard.writeText(window.location.href); alert("Link එක Copy විය!"); }
         }
 
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDxch4h83PlR9ofU3cdTV5ZZLydm1LzILU",
             authDomain: "edo-store.firebaseapp.com",
@@ -902,7 +919,7 @@
             });
         }
 
-        // Sync Settings Realtime from Firebase
+        // Sync Settings
         db.collection('settings').doc('general_config').onSnapshot(doc => {
             if (doc.exists) settings = { ...settings, ...doc.data() };
             document.getElementById('topWaNumber').innerText = settings.whatsapp;
@@ -918,7 +935,7 @@
             renderProducts();
         });
 
-        // Sync Ads Realtime
+        // Sync Ads
         db.collection('ads').orderBy('createdAt', 'desc').onSnapshot(snap => {
             ads = [];
             const now = new Date();
@@ -958,7 +975,7 @@
             }, 4000);
         }
 
-        // Sync Products Realtime
+        // Sync Products
         db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
             products = [];
             const now = new Date();
@@ -1048,7 +1065,7 @@
             cart.push({ id, title, price });
             document.getElementById('cartCountBadge').innerText = cart.length;
             let total = 0;
-            document.getElementById('cartItemsList').innerHTML = cart.map((item, idx) => {
+            document.getElementById('cartItemsList').innerHTML = cart.map((item) => {
                 total += item.price;
                 return `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; font-size:0.85rem;"><span>${item.title}</span><span>රු. ${item.price}/=</span></div>`;
             }).join('');
